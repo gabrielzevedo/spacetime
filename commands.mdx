@@ -1,0 +1,38 @@
+# Commands used to create this project
+
+## Setup
+```bash
+npm init -y
+```
+
+## Typescript
+```bash
+npm i typescript -D
+npm install @types/node -D
+npx tsc --init
+npm install tsx -D
+```
+
+## Fastify
+```bash
+npm i fastify
+```
+
+## ESLint
+```bash
+npm install eslint -D
+npm i @rocketseat/eslint-config -D
+```
+
+## Prisma
+```bash
+npm i prisma -D
+npx prisma init --datasource-provider SQLite
+npx prisma studio
+npm i @prisma/client
+```
+
+After create user table
+```bash
+npx prisma migrate dev
+```
