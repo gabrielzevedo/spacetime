@@ -2,8 +2,12 @@ import { Copyright } from '@/components/Copyright'
 import { EmptyMemories } from '@/components/EmptyMemories'
 import { Hero } from '@/components/Hero'
 import { SignIn } from '@/components/SignIn'
+import { Profile } from '@/components/Profile'
+import { isAuthenticated } from '@/lib/auth'
 
 export default function Home() {
+  const isLogged = isAuthenticated()
+
   return (
     <main className="grid min-h-screen grid-cols-2">
       {/* Left */}
@@ -14,7 +18,7 @@ export default function Home() {
         {/* Stripes */}
         <div className="absolute bottom-0 right-2 top-0 w-2 bg-stripes" />
 
-        <SignIn />
+        {isLogged ? <Profile /> : <SignIn />}
         <Hero />
         <Copyright />
       </div>
