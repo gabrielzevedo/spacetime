@@ -28,7 +28,7 @@ export default function App() {
       'https://github.com/settings/connections/applications/131f9e785bd5c1fddbdc',
   }
 
-  const [request, response, signInWithGithub] = useAuthRequest(
+  const [, response, signInWithGithub] = useAuthRequest(
     {
       clientId: '131f9e785bd5c1fddbdc',
       scopes: ['identity'],
