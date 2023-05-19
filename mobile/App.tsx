@@ -1,5 +1,6 @@
 import { StatusBar } from 'expo-status-bar'
 import { ImageBackground, Text, TouchableOpacity, View } from 'react-native'
+import * as SecureStore from 'expo-secure-store'
 
 import {
   useFonts,
@@ -13,10 +14,50 @@ import blurBg from './assets/bg-blur.png'
 import Stripes from './assets/stripes.svg'
 import NLWLogo from './assets/nlw-spacetime-logo.svg'
 import { styled } from 'nativewind'
+import { makeRedirectUri, useAuthRequest } from 'expo-auth-session'
+import { useEffect } from 'react'
+import { api } from './src/lib/api'
 
 const StyledStripes = styled(Stripes)
 
 export default function App() {
+  const discovery = {
+    authorizationEndpoint: 'https://github.com/login/oauth/authorize',
+    tokenEndpoint: 'https://github.com/login/oauth/access_token',
+    revocationEndpoint:
+      'https://github.com/settings/connections/applications/131f9e785bd5c1fddbdc',
+  }
+
+  const [request, response, signInWithGithub] = useAuthRequest(
+    {
+      clientId: '131f9e785bd5c1fddbdc',
+      scopes: ['identity'],
+      redirectUri: makeRedirectUri({
+        scheme: 'nlwspacetime',
+      }),
+    },
+    discovery,
+  )
+
+  useEffect(() => {
+    if (response?.type === 'success') {
+      const { code } = response.params
+
+      api
+        .post('register', {
+          code,
+          device: 'mobile',
+        })
+        .then((response) => {
+          const { token } = response.data
+          SecureStore.setItemAsync('token', token)
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    }
+  }, [response])
+
   const [hasLoadedFonts] = useFonts({
     Roboto_400Regular,
     Roboto_700Bold,
@@ -51,6 +92,7 @@ export default function App() {
         <TouchableOpacity
           activeOpacity={0.7}
           className="rounded-full bg-green-500 px-5 py-2"
+          onPress={() => signInWithGithub()}
         >
           <Text className="font-alt text-sm uppercase text-black">
             Cadastrar lembrança
