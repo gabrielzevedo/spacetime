@@ -4,4 +4,5 @@
 
 body {
   @apply antialiased font-sans bg-gray-900 text-gray-100;
+  color-scheme: dark;
 }

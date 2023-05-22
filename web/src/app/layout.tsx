@@ -23,8 +23,12 @@ export const metadata = {
     'Página desenvolvida durante o NLW Spacetime, por @gabrielzevedo',
 }
 
-export default function RootLayout({ children }: { children: ReactNode }) {
-  const isLogged = isAuthenticated()
+export default async function RootLayout({
+  children,
+}: {
+  children: ReactNode
+}) {
+  const isLogged = await isAuthenticated()
 
   return (
     <html lang="en">
@@ -44,7 +48,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           </div>
 
           {/* Right */}
-          <div className="flex flex-col bg-[url(../assets/bg-stars.svg)] bg-cover p-16">
+          <div className="flex max-h-screen flex-col overflow-y-scroll bg-[url(../assets/bg-stars.svg)] bg-cover">
             {children}
           </div>
         </main>

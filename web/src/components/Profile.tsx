@@ -1,8 +1,8 @@
 import { getUser } from '@/lib/auth'
 import Image from 'next/image'
 
-export function Profile() {
-  const { name, avatarUrl } = getUser()
+export async function Profile() {
+  const { name, avatarUrl } = await getUser()
 
   return (
     <div className="flex items-center gap-3 text-left">

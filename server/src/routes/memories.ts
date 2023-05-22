@@ -27,6 +27,7 @@ export async function memoriesRoutes(app: FastifyInstance) {
           memory.content.length > maxCharacters
             ? memory.content.substring(0, maxCharacters).concat('...')
             : memory.content,
+        createdAt: memory.createdAt,
       }
     })
 
@@ -40,22 +41,32 @@ export async function memoriesRoutes(app: FastifyInstance) {
 
     const { id } = paramsSchema.parse(request.params)
 
-    const memory = await prisma.memory.findUniqueOrThrow({
-      where: {
-        id,
-      },
-    })
+    try {
+      const memory = await prisma.memory.findUniqueOrThrow({
+        where: {
+          id,
+        },
+      })
 
-    if (!memory.isPublic && memory.userId !== request.user.sub) {
-      return reply.status(401).send({
-        message: 'Unauthorized',
+      if (!memory.isPublic && memory.userId !== request.user.sub) {
+        return reply.status(401).send({
+          message: 'Unauthorized',
+        })
+      }
+
+      return reply.send(memory)
+
+    } catch (error) {
+      return reply.status(404).send({
+        message: 'Memory not found',
       })
     }
-
-    reply.send(memory)
+    return reply.status(404).send({
+      message: 'Memory not found',
+    })
   })
 
-  app.post('/memories/:id', async (request, reply) => {
+  app.post('/memories', async (request, reply) => {
     const bodySchema = z.object({
       content: z.string(),
       coverUrl: z.string(),

@@ -3,6 +3,7 @@ import { useRouter } from 'expo-router'
 import { Text, TouchableOpacity, View } from 'react-native'
 import { makeRedirectUri, useAuthRequest } from 'expo-auth-session'
 import * as SecureStore from 'expo-secure-store'
+import * as WebBrowser from 'expo-web-browser'
 
 import NLWLogo from '../assets/nlw-spacetime-logo.svg'
 import { api } from '../src/lib/api'
@@ -11,30 +12,41 @@ const discovery = {
   authorizationEndpoint: 'https://github.com/login/oauth/authorize',
   tokenEndpoint: 'https://github.com/login/oauth/access_token',
   revocationEndpoint:
-    'https://github.com/settings/connections/applications/d26f194cc5d5132a51be',
+    'https://github.com/settings/connections/applications/131f9e785bd5c1fddbdc',
 }
+
+WebBrowser.maybeCompleteAuthSession()
 
 export default function App() {
   const router = useRouter()
 
   const [, response, signInWithGithub] = useAuthRequest(
     {
-      clientId: 'd26f194cc5d5132a51be',
+      clientId: '131f9e785bd5c1fddbdc',
       scopes: ['identity'],
       redirectUri: makeRedirectUri({
-        scheme: 'nlwspacetime',
+        scheme: 'spacetime',
       }),
     },
     discovery,
   )
 
+  async function signIn() {
+    try {
+      await signInWithGithub()
+    } catch (error) {
+      console.error(error)
+      throw error
+    }
+  }
+
   async function handleGithubOAuthCode(code: string) {
-    const response = await api.post('/register', {
+    const responseRegister = await api.post('/register', {
       code,
       device: 'mobile',
     })
 
-    const { token } = response.data
+    const { token } = responseRegister.data
 
     await SecureStore.setItemAsync('token', token)
 
@@ -74,7 +86,7 @@ export default function App() {
         <TouchableOpacity
           activeOpacity={0.7}
           className="rounded-full bg-green-500 px-5 py-2"
-          onPress={() => signInWithGithub()}
+          onPress={() => signIn()}
         >
           <Text className="font-alt text-sm uppercase text-black">
             Cadastrar lembrança

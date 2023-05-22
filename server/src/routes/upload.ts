@@ -44,7 +44,7 @@ export async function uploadRoutes(app: FastifyInstance) {
       request.protocol + '://' + request.headers.host + '/uploads/' + fileName
 
     reply.send({
-      url: fullUrl,
+      fileUrl: fullUrl,
     })
   })
 }
